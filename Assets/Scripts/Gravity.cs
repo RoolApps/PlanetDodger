@@ -13,30 +13,33 @@ public class Gravity : MonoBehaviour {
     private float GravitationalPull; // Pull force
     private float PullRadius; // Radius to pull
     private Vector3 Center;
+    private Rigidbody2D PlayerRigidbody;
+    private SpriteRenderer PlayerSpriteRenderer;
+    private SpriteRenderer PlanetSpriteRenderer;
 
     private void Start()
     {
-        Player = GameObject.Find("Player");
-        var radius = transform.localScale.x;
-        PullRadius = radius * 2;
+        var player = GameObject.Find("Player");
+        PlayerRigidbody = player.GetComponent<Rigidbody2D>();
+        PlayerSpriteRenderer = player.GetComponent<SpriteRenderer>();
+        PlanetSpriteRenderer = GetComponent<SpriteRenderer>();
+
+        var radius = PlanetSpriteRenderer.bounds.size.x / 2;
+        PullRadius = radius * 4;
         GravitationalPull = radius * radius * PullMultiplier;
-        //Center = new Vector3(transform.position.x + renderer., transform.position.y - transform.lossyScale.y / 2, transform.position.z);
     }
 
     // Function that runs on every physics frame
     void LateUpdate()
     {
-        Rigidbody2D rb = Player.GetComponent<Rigidbody2D>();
-
-        if (rb == null)
+        Vector3 direction = PlanetSpriteRenderer.bounds.center - PlayerSpriteRenderer.bounds.center;
+        if (direction.magnitude > PullRadius)
         {
             return;
         }
-        
-        Vector3 direction = GetComponent<SpriteRenderer>().bounds.center - Player.GetComponent<SpriteRenderer>().bounds.center;
 
-        float distance = direction.sqrMagnitude * DistanceMultiplier + 1; 
+        float distance = direction.sqrMagnitude * DistanceMultiplier + 1;
 
-        rb.AddForce(direction.normalized * (GravitationalPull / distance) * rb.mass * Time.deltaTime);
+        PlayerRigidbody.AddForce(direction.normalized * (GravitationalPull / distance) * PlayerRigidbody.mass * Time.deltaTime);
     }
 }

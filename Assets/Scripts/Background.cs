@@ -15,8 +15,8 @@ public class Background : MonoBehaviour {
 
         Material mat = mr.material;
 
-        var xOffset = (transform.position.x % transform.lossyScale.x) / transform.lossyScale.x;
-        var yOffset = (transform.position.y % transform.lossyScale.y) / transform.lossyScale.y;
+        var xOffset = (transform.position.x % (transform.lossyScale.x * 2)) / (transform.lossyScale.x * 2);
+        var yOffset = (transform.position.y % (transform.lossyScale.y * 2)) / (transform.lossyScale.y * 2);
 
         mat.mainTextureOffset = new Vector2(xOffset, yOffset);
     }
