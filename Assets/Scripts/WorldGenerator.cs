@@ -7,26 +7,43 @@ using UnityEngine;
 public class WorldGenerator : MonoBehaviour {
 
     public int PlanetSpacing;
-    
+    public float Noise;
+    public int RenderedPlanets;
+    public GameObject Player;
+    public GameObject Mesh;
 
+    private Vector2 PlanetBoxSize;
+    
     // Use this for initialization
     void Start () {
 
-        int amount = 10;
-
-        Enumerable.Range(-amount / 2, amount).ToList().ForEach(i =>
-        {
-            Enumerable.Range(-amount / 2, amount).ToList().ForEach(j =>
-            {
-                new StarredPlanet(new Vector3(i * PlanetSpacing, j * PlanetSpacing + ( i % 2 == 0 ? PlanetSpacing / 2 : 0)));
-            });
-        });
-        
+        PlanetBoxSize = new Vector2(PlanetSpacing, PlanetSpacing);
     }
 
     // Update is called once per frame
 	void Update () {
-        
+        var playerPosition = Player.transform.position;
+        var playerXBox = System.Convert.ToInt32(playerPosition.x / PlanetSpacing);
+        var playerYBox = System.Convert.ToInt32(playerPosition.y / PlanetSpacing);
+        var playerBox = new Vector2(playerXBox, playerYBox);
+
+        Enumerable.Range(playerXBox - RenderedPlanets / 2, RenderedPlanets + 1).ToList().ForEach(x =>
+        {
+            Enumerable.Range(playerYBox - RenderedPlanets / 2, RenderedPlanets + 1).ToList().ForEach(y =>
+            {
+                if( x == 0 && y == 0)
+                {
+                    return;
+                }
+                var planetXCenter = (System.Convert.ToSingle(2 * x + 1) * PlanetSpacing) / 2;
+                var planetYCenter = (System.Convert.ToSingle(2 * y + 1) * PlanetSpacing) / 2;
+                var planets = Physics2D.OverlapBoxAll(new Vector2(planetXCenter, planetYCenter), PlanetBoxSize, 0);
+                if (!planets.Any(planet => planet.name == "Planet(Clone)"))
+                {
+                    new StarredPlanet(new Vector3(x * PlanetSpacing + (y % 2 == 1 ? PlanetSpacing / 2 : 0) + Random.Range(0, Noise), y * PlanetSpacing + (x % 2 == 0 ? PlanetSpacing / 2 : 0) + Random.Range(0, Noise)));
+                }
+            });
+        });
     }
 
     static class PlanetSpritesFactory
@@ -50,13 +67,11 @@ public class WorldGenerator : MonoBehaviour {
 
         public StarredPlanet(Vector3 position)
         {
-            
-            
             var planet = CreatePlanet(position);
             var planetBounds = planet.GetComponent<SpriteRenderer>().bounds;
-            var planetRadius = planetBounds.size.magnitude / (2 * Mathf.Sqrt(2));
+            var planetRadius = planetBounds.size.magnitude / ( Mathf.Sqrt(2) * 2 );
             var planetCenter = planetBounds.center;
-            var star = CreateStar(planetCenter, planetRadius);
+            CreateStar(planetCenter, planetRadius);
         }
 
         private GameObject CreatePlanet(Vector3 position)
@@ -75,11 +90,8 @@ public class WorldGenerator : MonoBehaviour {
         {
             GameObject clone = Instantiate(starPrefab, Vector3.zero, Quaternion.identity) as GameObject;
             var angle = Random.Range(0, 2 * Mathf.PI);
-            Debug.Log(string.Format("Angle: {0}", angle));
             var starOffset = new Vector3(Mathf.Cos(angle) * planetRadius * starDistanceMultiplier, Mathf.Sin(angle) * planetRadius * starDistanceMultiplier);
-            Debug.Log(string.Format("Offset: {0}", starOffset));
             clone.transform.position = position + starOffset;
-            Debug.Log(string.Format("Position: {0}, starPosition: {1}", position, clone.transform.position));
             return clone;
         }
     }

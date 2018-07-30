@@ -10,7 +10,7 @@ public class Background : MonoBehaviour {
 	}
 	
 	// Update is called once per frame
-	void FixedUpdate () {
+	void LateUpdate () {
         MeshRenderer mr = GetComponent<MeshRenderer>();
 
         Material mat = mr.material;

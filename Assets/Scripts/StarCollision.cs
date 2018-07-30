@@ -19,8 +19,11 @@ public class StarCollision : MonoBehaviour {
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        score++;
-        Score.text = score.ToString();
-        Destroy(collision.gameObject);
+        if(collision.name == "Star(Clone)")
+        {
+            score++;
+            Score.text = score.ToString();
+            Destroy(collision.gameObject);
+        }
     }
 }

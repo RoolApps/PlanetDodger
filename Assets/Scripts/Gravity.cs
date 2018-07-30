@@ -30,7 +30,7 @@ public class Gravity : MonoBehaviour {
     }
 
     // Function that runs on every physics frame
-    void LateUpdate()
+    void FixedUpdate()
     {
         Vector3 direction = PlanetSpriteRenderer.bounds.center - PlayerSpriteRenderer.bounds.center;
         if (direction.magnitude > PullRadius)
@@ -40,6 +40,6 @@ public class Gravity : MonoBehaviour {
 
         float distance = direction.sqrMagnitude * DistanceMultiplier + 1;
 
-        PlayerRigidbody.AddForce(direction.normalized * (GravitationalPull / distance) * PlayerRigidbody.mass * Time.deltaTime);
+        PlayerRigidbody.AddForce(direction.normalized * (GravitationalPull / distance) * PlayerRigidbody.mass * Time.fixedDeltaTime);
     }
 }
