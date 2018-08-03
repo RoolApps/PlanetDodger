@@ -25,13 +25,12 @@ public class WorldGenerator : MonoBehaviour {
         var playerPosition = Player.transform.position;
         var playerXBox = System.Convert.ToInt32(playerPosition.x / PlanetSpacing);
         var playerYBox = System.Convert.ToInt32(playerPosition.y / PlanetSpacing);
-        var playerBox = new Vector2(playerXBox, playerYBox);
-
+        
         Enumerable.Range(playerXBox - RenderedPlanets / 2, RenderedPlanets + 1).ToList().ForEach(x =>
         {
             Enumerable.Range(playerYBox - RenderedPlanets / 2, RenderedPlanets + 1).ToList().ForEach(y =>
             {
-                if( x == 0 && y == 0)
+                if (Mathf.Abs(x - 1) <= 2 && Mathf.Abs(y - 1) <= 2)
                 {
                     return;
                 }
@@ -48,9 +47,9 @@ public class WorldGenerator : MonoBehaviour {
 
     static class PlanetSpritesFactory
     {
-        const int planetSpritesCount = 5;
+        const int planetSpritesCount = 4;
         static Sprite[] planetSprites = Enumerable.Range(0, planetSpritesCount)
-            .Select(planetId => AssetDatabase.LoadAssetAtPath<Texture2D>(string.Format("Assets/Sprites/Planet{0}_2.png", planetId)))
+            .Select(planetId => AssetDatabase.LoadAssetAtPath<Texture2D>(string.Format("Assets/Sprites/Planet{0}.png", planetId)))
             .Select(texture => Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), Vector2.zero)).ToArray();
 
         public static Sprite Get()
@@ -61,9 +60,11 @@ public class WorldGenerator : MonoBehaviour {
 
     class StarredPlanet
     {
-        static float starDistanceMultiplier = 1.5f;
+        static float magicLocalRadius = 5.4f;
+        static float starDistanceMultiplier = 2f;
         static Object starPrefab = AssetDatabase.LoadAssetAtPath("Assets/Prefabs/Star.prefab", typeof(GameObject));
         static Object planetPrefab = AssetDatabase.LoadAssetAtPath("Assets/Prefabs/Planet.prefab", typeof(GameObject));
+        static GameObject planetParticleSystemPrefab = AssetDatabase.LoadAssetAtPath("Assets/Prefabs/PlanetParticleSystem.prefab", typeof(GameObject)) as GameObject;
 
         public StarredPlanet(Vector3 position)
         {
@@ -72,6 +73,7 @@ public class WorldGenerator : MonoBehaviour {
             var planetRadius = planetBounds.size.magnitude / ( Mathf.Sqrt(2) * 2 );
             var planetCenter = planetBounds.center;
             CreateStar(planetCenter, planetRadius);
+            CreatePlanetParticleSystem(planet, planetCenter, planetRadius);
         }
 
         private GameObject CreatePlanet(Vector3 position)
@@ -82,11 +84,23 @@ public class WorldGenerator : MonoBehaviour {
             clone.transform.position = position;
             var spriteRenderer = clone.GetComponent<SpriteRenderer>();
             spriteRenderer.sprite = PlanetSpritesFactory.Get();
-            
             return clone;
         }
 
-        GameObject CreateStar(Vector3 position, float planetRadius)
+        private GameObject CreatePlanetParticleSystem(GameObject planet, Vector3 position, float planetRadius)
+        {
+            GameObject clone = Instantiate(planetParticleSystemPrefab, planet.transform);
+            clone.transform.localPosition = new Vector3(magicLocalRadius, magicLocalRadius);
+            ParticleSystem system = clone.GetComponent<ParticleSystem>();
+
+            var shape = system.shape;
+            shape.scale = new Vector3(planetRadius, 1, 1);
+            shape.position = new Vector3(0, 0, planetRadius);
+
+            return clone;
+        }
+
+        private GameObject CreateStar(Vector3 position, float planetRadius)
         {
             GameObject clone = Instantiate(starPrefab, Vector3.zero, Quaternion.identity) as GameObject;
             var angle = Random.Range(0, 2 * Mathf.PI);

@@ -5,8 +5,8 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour {
 
     public float acceleration;
-    //private float maxSpeed = 10;
-    //private Vector3 speed = new Vector2(0, 0);
+    public ParticleSystem system;
+    public bool ScriptEnabled;
     private Vector3 screenCenter;
 
 	// Use this for initialization
@@ -16,7 +16,7 @@ public class PlayerController : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update() {
-        if (Input.GetMouseButton(0))
+        if (ScriptEnabled && Input.GetMouseButton(0))
         {
             var direction = Input.mousePosition - screenCenter;
             float AngleRad = Mathf.Atan2(direction.y, direction.x);
@@ -25,6 +25,15 @@ public class PlayerController : MonoBehaviour {
 
             Rigidbody2D rb = GetComponent<Rigidbody2D>();
             rb.AddForce(direction.normalized * acceleration * Time.fixedDeltaTime);
+
+            if(system.isStopped)
+            {
+                system.Play();
+            }
+        }
+        else if(system.isPlaying)
+        {
+            system.Stop();
         }
     }
 }
