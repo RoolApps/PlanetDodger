@@ -47,7 +47,7 @@ public class WorldGenerator : MonoBehaviour {
 
     static class PlanetSpritesFactory
     {
-        const int planetSpritesCount = 4;
+        const int planetSpritesCount = 15;
         static Sprite[] planetSprites = Enumerable.Range(0, planetSpritesCount)
             .Select(planetId => AssetDatabase.LoadAssetAtPath<Texture2D>(string.Format("Assets/Sprites/Planet{0}.png", planetId)))
             .Select(texture => Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), Vector2.zero)).ToArray();
