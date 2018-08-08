@@ -22,6 +22,7 @@ GameObject:
   - component: {fileID: 212669462357384648}
   - component: {fileID: 50570252604631282}
   - component: {fileID: 60607583718378654}
+  - component: {fileID: 95334706153286624}
   m_Layer: 0
   m_Name: Star
   m_TagString: Untagged
@@ -187,6 +188,23 @@ PolygonCollider2D:
       - {x: -1.3, y: -2.25}
       - {x: -1.22, y: -2.21}
       - {x: -1.02, y: -2.07}
+--- !u!95 &95334706153286624
+Animator:
+  serializedVersion: 3
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1907401221849764}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 2348cbf5f82a1e646946e1009e4afe46, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
 --- !u!212 &212669462357384648
 SpriteRenderer:
   m_ObjectHideFlags: 1

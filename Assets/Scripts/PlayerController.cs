@@ -7,17 +7,16 @@ public class PlayerController : MonoBehaviour {
     public float acceleration;
     public ParticleSystem system;
     public bool ScriptEnabled;
-    private Vector3 screenCenter;
 
 	// Use this for initialization
 	void Start () {
-        screenCenter = new Vector3(Screen.width / 2, Screen.height / 2);
 	}
 	
 	// Update is called once per frame
 	void Update() {
         if (ScriptEnabled && Input.GetMouseButton(0))
         {
+            var screenCenter = new Vector3(Screen.width / 2, Screen.height / 2);
             var direction = Input.mousePosition - screenCenter;
             float AngleRad = Mathf.Atan2(direction.y, direction.x);
             float AngleDeg = (180 / Mathf.PI) * AngleRad;

@@ -1,7 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using UnityEditor;
 using UnityEngine;
 
 public class WorldGenerator : MonoBehaviour {
@@ -39,7 +38,11 @@ public class WorldGenerator : MonoBehaviour {
                 var planets = Physics2D.OverlapBoxAll(new Vector2(planetXCenter, planetYCenter), PlanetBoxSize, 0);
                 if (!planets.Any(planet => planet.name == "Planet(Clone)"))
                 {
-                    new StarredPlanet(new Vector3(x * PlanetSpacing + (y % 2 == 1 ? PlanetSpacing / 2 : 0) + Random.Range(0, Noise), y * PlanetSpacing + (x % 2 == 0 ? PlanetSpacing / 2 : 0) + Random.Range(0, Noise)));
+                    new StarredPlanet(
+                        new Vector3(
+                            x * PlanetSpacing + (y % 2 == 1 ? PlanetSpacing / 2 : 0) + Random.Range(0, Noise),
+                            y * PlanetSpacing + (x % 2 == 0 ? PlanetSpacing / 2 : 0) + Random.Range(0, Noise)),
+                        Player);
                 }
             });
         });
@@ -49,8 +52,8 @@ public class WorldGenerator : MonoBehaviour {
     {
         const int planetSpritesCount = 15;
         static Sprite[] planetSprites = Enumerable.Range(0, planetSpritesCount)
-            .Select(planetId => AssetDatabase.LoadAssetAtPath<Texture2D>(string.Format("Assets/Sprites/Planet{0}.png", planetId)))
-            .Select(texture => Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), Vector2.zero)).ToArray();
+            .Select(planetId => Resources.Load<Texture2D>(string.Format("Sprites/Planet{0}", planetId)))
+            .Select(texture => Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f))).ToArray();
 
         public static Sprite Get()
         {
@@ -60,20 +63,21 @@ public class WorldGenerator : MonoBehaviour {
 
     class StarredPlanet
     {
-        static float magicLocalRadius = 5.4f;
         static float starDistanceMultiplier = 2f;
-        static Object starPrefab = AssetDatabase.LoadAssetAtPath("Assets/Prefabs/Star.prefab", typeof(GameObject));
-        static Object planetPrefab = AssetDatabase.LoadAssetAtPath("Assets/Prefabs/Planet.prefab", typeof(GameObject));
-        static GameObject planetParticleSystemPrefab = AssetDatabase.LoadAssetAtPath("Assets/Prefabs/PlanetParticleSystem.prefab", typeof(GameObject)) as GameObject;
+        static Object starPrefab = Resources.Load("Prefabs/Star", typeof(GameObject));
+        static Object planetPrefab = Resources.Load("Prefabs/Planet", typeof(GameObject));
+        static GameObject shipParticleSystemPrefab = Resources.Load("Prefabs/ShipParticleSystem", typeof(GameObject)) as GameObject;
+        static GameObject planetParticleSystemPrefab = Resources.Load("Prefabs/PlanetParticleSystem", typeof(GameObject)) as GameObject;
 
-        public StarredPlanet(Vector3 position)
+        public StarredPlanet(Vector3 position, GameObject player)
         {
             var planet = CreatePlanet(position);
             var planetBounds = planet.GetComponent<SpriteRenderer>().bounds;
             var planetRadius = planetBounds.size.magnitude / ( Mathf.Sqrt(2) * 2 );
             var planetCenter = planetBounds.center;
             CreateStar(planetCenter, planetRadius);
-            CreatePlanetParticleSystem(planet, planetCenter, planetRadius);
+            CreateShipParticleSystem(planet, player);
+            CreatePlanetParticleSystem(planet, player, planetRadius);
         }
 
         private GameObject CreatePlanet(Vector3 position)
@@ -87,16 +91,24 @@ public class WorldGenerator : MonoBehaviour {
             return clone;
         }
 
-        private GameObject CreatePlanetParticleSystem(GameObject planet, Vector3 position, float planetRadius)
+        private GameObject CreateShipParticleSystem(GameObject planet, GameObject player)
+        {
+            GameObject clone = Instantiate(shipParticleSystemPrefab, player.transform);
+            planet.GetComponent<Gravity>().ShipParticleSystem = clone.GetComponent<ParticleSystem>();
+            ParticleAttractor particleAttractor = clone.GetComponent<ParticleAttractor>();
+            particleAttractor.Target = planet.transform;
+            
+            return clone;
+        }
+
+        private GameObject CreatePlanetParticleSystem(GameObject planet, GameObject player, float planetRadius)
         {
             GameObject clone = Instantiate(planetParticleSystemPrefab, planet.transform);
-            clone.transform.localPosition = new Vector3(magicLocalRadius, magicLocalRadius);
-            ParticleSystem system = clone.GetComponent<ParticleSystem>();
+            var system = clone.GetComponent<ParticleSystem>();
 
             var shape = system.shape;
-            shape.scale = new Vector3(planetRadius, 1, 1);
-            shape.position = new Vector3(0, 0, planetRadius);
-
+            shape.radius = planetRadius * 1.2f;
+            shape.donutRadius = planetRadius / 25;
             return clone;
         }
 

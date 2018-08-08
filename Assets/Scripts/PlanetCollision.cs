@@ -6,6 +6,7 @@ public class PlanetCollision : MonoBehaviour {
 
     public GameObject Explosion;
     public ParticleSystem Smoke;
+    public UnityEngine.UI.Button RestartButton;
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
@@ -13,10 +14,12 @@ public class PlanetCollision : MonoBehaviour {
         {
             GetComponent<PlayerController>().ScriptEnabled = false;
             Explosion.SetActive(true);
-            if(Smoke.isStopped)
-            {
-                Smoke.Play();
-            }
+            RestartButton.gameObject.SetActive(true);
+            
+            //if(Smoke.isStopped)
+            //{
+            //    Smoke.Play();
+            //}
         }
     }
 }

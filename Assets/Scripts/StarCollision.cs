@@ -1,6 +1,5 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using UnityEditor;
 using UnityEngine;
 
 public class StarCollision : MonoBehaviour {
@@ -11,7 +10,7 @@ public class StarCollision : MonoBehaviour {
 
     // Use this for initialization
     void Start () {
-        starExplosionPrefab = AssetDatabase.LoadAssetAtPath("Assets/Prefabs/StarExplosion.prefab", typeof(GameObject));
+        starExplosionPrefab = Resources.Load("Prefabs/StarExplosion", typeof(GameObject));
     }
 	
 	// Update is called once per frame

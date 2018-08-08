@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class Gravity : MonoBehaviour {
@@ -8,6 +9,7 @@ public class Gravity : MonoBehaviour {
     
     public float PullMultiplier;
     public float DistanceMultiplier; // Factor by which the distance affects force
+    public ParticleSystem ShipParticleSystem;
 
     private float GravitationalPull; // Pull force
     private float PullRadius; // Radius to pull
@@ -26,16 +28,8 @@ public class Gravity : MonoBehaviour {
         var radius = PlanetSpriteRenderer.bounds.size.x / 2;
         PullRadius = radius * 4;
         GravitationalPull = radius * radius * PullMultiplier;
-    }
 
-    private ParticleSystem GetParticleSystem()
-    {
-        if(PlanetParticleSystem == null)
-        {
-            var particleSystem = GetComponentInChildren<ParticleSystem>();
-            PlanetParticleSystem = particleSystem;
-        }
-        return PlanetParticleSystem;
+        PlanetParticleSystem = GetComponentInChildren<ParticleSystem>();
     }
 
     // Function that runs on every physics frame
@@ -43,7 +37,7 @@ public class Gravity : MonoBehaviour {
     {
         Vector3 direction = PlanetSpriteRenderer.bounds.center - PlayerSpriteRenderer.bounds.center;
         
-        var particleSystem = GetParticleSystem();
+        var particleSystem = ShipParticleSystem;
         if(particleSystem != null)
         {
             float AngleRad = Mathf.Atan2(direction.y, direction.x);
@@ -57,16 +51,18 @@ public class Gravity : MonoBehaviour {
 
         if (direction.magnitude > PullRadius)
         {
-            if (PlanetParticleSystem.isPlaying)
+            if (ShipParticleSystem.isPlaying)
             {
+                ShipParticleSystem.Stop();
                 PlanetParticleSystem.Stop();
             }
             return;
         }
         else
         {
-            if (!PlanetParticleSystem.isPlaying)
+            if (!ShipParticleSystem.isPlaying)
             {
+                ShipParticleSystem.Play();
                 PlanetParticleSystem.Play();
             }
         }
