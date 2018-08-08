@@ -67,7 +67,6 @@ public class WorldGenerator : MonoBehaviour {
         static Object starPrefab = Resources.Load("Prefabs/Star", typeof(GameObject));
         static Object planetPrefab = Resources.Load("Prefabs/Planet", typeof(GameObject));
         static GameObject shipParticleSystemPrefab = Resources.Load("Prefabs/ShipParticleSystem", typeof(GameObject)) as GameObject;
-        static GameObject planetParticleSystemPrefab = Resources.Load("Prefabs/PlanetParticleSystem", typeof(GameObject)) as GameObject;
 
         public StarredPlanet(Vector3 position, GameObject player)
         {
@@ -77,7 +76,6 @@ public class WorldGenerator : MonoBehaviour {
             var planetCenter = planetBounds.center;
             CreateStar(planetCenter, planetRadius);
             CreateShipParticleSystem(planet, player);
-            CreatePlanetParticleSystem(planet, player, planetRadius);
         }
 
         private GameObject CreatePlanet(Vector3 position)
@@ -86,6 +84,7 @@ public class WorldGenerator : MonoBehaviour {
             var radius = Random.Range(0.1f, 0.5f);
             clone.transform.localScale = new Vector3(radius, radius, 1);
             clone.transform.position = position;
+            clone.transform.localRotation = Quaternion.Euler(0, 0, Random.Range(0f, 360f));
             var spriteRenderer = clone.GetComponent<SpriteRenderer>();
             spriteRenderer.sprite = PlanetSpritesFactory.Get();
             return clone;
@@ -98,17 +97,6 @@ public class WorldGenerator : MonoBehaviour {
             ParticleAttractor particleAttractor = clone.GetComponent<ParticleAttractor>();
             particleAttractor.Target = planet.transform;
             
-            return clone;
-        }
-
-        private GameObject CreatePlanetParticleSystem(GameObject planet, GameObject player, float planetRadius)
-        {
-            GameObject clone = Instantiate(planetParticleSystemPrefab, planet.transform);
-            var system = clone.GetComponent<ParticleSystem>();
-
-            var shape = system.shape;
-            shape.radius = planetRadius * 1.2f;
-            shape.donutRadius = planetRadius / 25;
             return clone;
         }
 
