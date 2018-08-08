@@ -16,7 +16,7 @@ public class Gravity : MonoBehaviour {
     private Rigidbody2D PlayerRigidbody;
     private SpriteRenderer PlayerSpriteRenderer;
     private SpriteRenderer PlanetSpriteRenderer;
-    private ParticleSystem PlanetParticleSystem;
+    private SpriteRenderer PlanetCircleSpriteRenderer;
 
     private void Start()
     {
@@ -24,37 +24,32 @@ public class Gravity : MonoBehaviour {
         PlayerRigidbody = player.GetComponent<Rigidbody2D>();
         PlayerSpriteRenderer = player.GetComponent<SpriteRenderer>();
         PlanetSpriteRenderer = GetComponent<SpriteRenderer>();
+        PlanetCircleSpriteRenderer = GetComponentsInChildren<SpriteRenderer>().Single(renderer => renderer.gameObject.name == "GravityCircle");
         
         var radius = PlanetSpriteRenderer.bounds.size.x / 2;
         PullRadius = radius * 4;
         GravitationalPull = radius * radius * PullMultiplier;
-
-        PlanetParticleSystem = GetComponentInChildren<ParticleSystem>();
     }
 
     // Function that runs on every physics frame
     void FixedUpdate()
     {
         Vector3 direction = PlanetSpriteRenderer.bounds.center - PlayerSpriteRenderer.bounds.center;
-        
-        var particleSystem = ShipParticleSystem;
-        if(particleSystem != null)
-        {
-            float AngleRad = Mathf.Atan2(direction.y, direction.x);
-            float AngleDeg = (180 / Mathf.PI) * AngleRad;
-            particleSystem.transform.rotation = Quaternion.Euler(180 - AngleDeg, 90, -90);
 
-            var main = particleSystem.main;
-            main.startSpeedMultiplier = Mathf.Sqrt(direction.magnitude);
-            
-        }
+        float AngleRad = Mathf.Atan2(direction.y, direction.x);
+        float AngleDeg = (180 / Mathf.PI) * AngleRad;
+        ShipParticleSystem.transform.rotation = Quaternion.Euler(180 - AngleDeg, 90, -90);
+
+        var main = ShipParticleSystem.main;
+        main.startSpeedMultiplier = Mathf.Sqrt(direction.magnitude);
+
+        PlanetCircleSpriteRenderer.color = new Color(1, 1, 1, Mathf.Clamp(1f - (direction.magnitude - PullRadius * 0.8f) / (PullRadius * 0.2f), 0f, 1f));
 
         if (direction.magnitude > PullRadius)
         {
             if (ShipParticleSystem.isPlaying)
             {
                 ShipParticleSystem.Stop();
-                PlanetParticleSystem.Stop();
             }
             return;
         }
@@ -63,13 +58,12 @@ public class Gravity : MonoBehaviour {
             if (!ShipParticleSystem.isPlaying)
             {
                 ShipParticleSystem.Play();
-                PlanetParticleSystem.Play();
             }
         }
 
         float distance = direction.sqrMagnitude * DistanceMultiplier + 1;
 
         PlayerRigidbody.AddForce(direction.normalized * (GravitationalPull / distance) * PlayerRigidbody.mass * Time.fixedDeltaTime);
-        
+
     }
 }
