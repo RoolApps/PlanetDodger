@@ -5,9 +5,19 @@ using UnityEngine.SceneManagement;
 
 public class MenuController : MonoBehaviour {
 
+    AsyncOperation operation;
+    public UnityEngine.UI.Slider Progress;
+
 	public void StartGame()
     {
-        SceneManager.LoadScene("Scenes/GameplayScene");
-        //SceneManager.SetActiveScene(SceneManager.GetSceneByName("Scenes/GameplayScene"));
+        operation = SceneManager.LoadSceneAsync("Scenes/GameplayScene");
+    }
+
+    private void LateUpdate()
+    {
+        if(operation != null)
+        {
+            Progress.value = operation.progress;
+        }
     }
 }
