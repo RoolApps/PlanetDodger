@@ -11,6 +11,7 @@ public class MenuController : MonoBehaviour {
 	public void StartGame()
     {
         operation = SceneManager.LoadSceneAsync("Scenes/GameplayScene");
+        
     }
 
     private void LateUpdate()
@@ -19,5 +20,10 @@ public class MenuController : MonoBehaviour {
         {
             Progress.value = operation.progress;
         }
+    }
+
+    public void CloseGame()
+    {
+        Application.Quit();
     }
 }
