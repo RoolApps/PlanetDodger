@@ -6,7 +6,8 @@ using UnityEngine.SceneManagement;
 public class MenuController : MonoBehaviour {
 
     AsyncOperation operation;
-    public UnityEngine.UI.Slider Progress;
+    public UnityEngine.UI.Slider LandscapeProgress;
+    public UnityEngine.UI.Slider PortraitProgress;
 
 	public void StartGame()
     {
@@ -18,7 +19,8 @@ public class MenuController : MonoBehaviour {
     {
         if(operation != null)
         {
-            Progress.value = operation.progress;
+            LandscapeProgress.value = operation.progress;
+            PortraitProgress.value = operation.progress;
         }
     }
 

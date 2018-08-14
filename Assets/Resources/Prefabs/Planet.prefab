@@ -119,7 +119,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 16c78fc6f578c4f4d8ca10e4052f192c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  PullMultiplier: 2000
+  PullMultiplier: 1000
   DistanceMultiplier: 5
   ShipParticleSystem: {fileID: 0}
 --- !u!212 &212485713238229846

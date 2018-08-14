@@ -993,6 +993,16 @@ Prefab:
       propertyPath: m_Name
       value: Player
       objectReference: {fileID: 0}
+    - target: {fileID: 198139433657587128, guid: 24d729c7a5d567a4eb1811be57ede31a,
+        type: 2}
+      propertyPath: ShapeModule.m_Scale.y
+      value: 0.3
+      objectReference: {fileID: 0}
+    - target: {fileID: 198139433657587128, guid: 24d729c7a5d567a4eb1811be57ede31a,
+        type: 2}
+      propertyPath: randomSeed
+      value: 1609831915
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 24d729c7a5d567a4eb1811be57ede31a, type: 2}
   m_IsPrefabParent: 0
