@@ -10,6 +10,7 @@ public class WorldGenerator : MonoBehaviour {
     public int RenderedPlanets;
     public GameObject Player;
     public GameObject Mesh;
+    public float GravityMultiplier = 1.0f;
 
     private Vector2 PlanetBoxSize;
     
@@ -42,7 +43,8 @@ public class WorldGenerator : MonoBehaviour {
                         new Vector3(
                             x * PlanetSpacing + (y % 2 == 1 ? PlanetSpacing / 2 : 0) + Random.Range(0, Noise),
                             y * PlanetSpacing + (x % 2 == 0 ? PlanetSpacing / 2 : 0) + Random.Range(0, Noise)),
-                        Player);
+                        Player,
+                        GravityMultiplier);
                 }
             });
         });
@@ -68,9 +70,9 @@ public class WorldGenerator : MonoBehaviour {
         static Object planetPrefab = Resources.Load("Prefabs/Planet", typeof(GameObject));
         static GameObject shipParticleSystemPrefab = Resources.Load("Prefabs/ShipParticleSystem", typeof(GameObject)) as GameObject;
 
-        public StarredPlanet(Vector3 position, GameObject player)
+        public StarredPlanet(Vector3 position, GameObject player, float gravityMultiplier)
         {
-            var planet = CreatePlanet(position);
+            var planet = CreatePlanet(position, gravityMultiplier);
             var planetBounds = planet.GetComponent<SpriteRenderer>().bounds;
             var planetRadius = planetBounds.size.magnitude / ( Mathf.Sqrt(2) * 2 );
             var planetCenter = planetBounds.center;
@@ -78,7 +80,7 @@ public class WorldGenerator : MonoBehaviour {
             CreateShipParticleSystem(planet, player);
         }
 
-        private GameObject CreatePlanet(Vector3 position)
+        private GameObject CreatePlanet(Vector3 position, float gravityMultiplier)
         {
             GameObject clone = Instantiate(planetPrefab, Vector3.zero, Quaternion.identity) as GameObject;
             var radius = Random.Range(0.1f, 0.5f);
@@ -87,6 +89,7 @@ public class WorldGenerator : MonoBehaviour {
             clone.transform.localRotation = Quaternion.Euler(0, 0, Random.Range(0f, 360f));
             var spriteRenderer = clone.GetComponent<SpriteRenderer>();
             spriteRenderer.sprite = PlanetSpritesFactory.Get();
+            clone.GetComponent<Gravity>().PullMultiplier *= gravityMultiplier;
             return clone;
         }
 

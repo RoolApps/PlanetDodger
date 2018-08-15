@@ -13,7 +13,7 @@ public class PlayerController : MonoBehaviour {
 	}
 	
 	// Update is called once per frame
-	void Update() {
+	void FixedUpdate() {
         if (ScriptEnabled && Input.GetMouseButton(0))
         {
             var screenCenter = new Vector3(Screen.width / 2, Screen.height / 2);

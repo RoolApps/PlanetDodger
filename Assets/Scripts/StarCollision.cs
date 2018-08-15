@@ -4,7 +4,9 @@ using UnityEngine;
 
 public class StarCollision : MonoBehaviour {
 
-    public UnityEngine.UI.Text Score;
+    public TMPro.TextMeshProUGUI Score;
+    public TMPro.TextMeshProUGUI Gravity;
+    public WorldGenerator Generator;
     int score = 0;
     private Object starExplosionPrefab;
 
@@ -23,11 +25,14 @@ public class StarCollision : MonoBehaviour {
         if(collision.name == "Star(Clone)")
         {
             score++;
-            Score.text = score.ToString();
+            Score.text = string.Format("Score: {0}", score);
             var explosion = Instantiate(starExplosionPrefab, collision.gameObject.transform.position, Quaternion.identity);
             Destroy(collision.gameObject);
             Destroy(explosion, 3f);
-            
+
+            float gravityMultiplier = 1.0f + System.Convert.ToSingle(score) / 100;
+            Generator.GravityMultiplier = gravityMultiplier;
+            Gravity.text = string.Format("Gravity: {0}g", gravityMultiplier.ToString("n1"));
         }
     }
 }
