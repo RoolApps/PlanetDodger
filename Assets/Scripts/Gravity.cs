@@ -43,7 +43,7 @@ public class Gravity : MonoBehaviour {
         var main = ShipParticleSystem.main;
         main.startSpeedMultiplier = Mathf.Sqrt(direction.magnitude);
 
-        PlanetCircleSpriteRenderer.color = new Color(1, 1, 1, Mathf.Clamp(1f - (direction.magnitude - PullRadius * 0.8f) / (PullRadius * 0.2f), 0f, 1f));
+        PlanetCircleSpriteRenderer.color = new Color(1, 1, 1, Mathf.Clamp(1f - (direction.magnitude - PullRadius * 0.5f) / (PullRadius * 0.5f), 0f, 1f));
 
         if (direction.magnitude > PullRadius)
         {

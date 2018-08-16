@@ -7,12 +7,14 @@ public class PlanetCollision : MonoBehaviour {
     public GameObject Explosion;
     public ParticleSystem Smoke;
     public UnityEngine.UI.Button RestartButton;
+    public JoystickController Controller;
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
         if(collision.gameObject.name == "Planet(Clone)")
         {
             GetComponent<PlayerController>().ScriptEnabled = false;
+            Controller.ScriptEnabled = false;
             Explosion.SetActive(true);
             RestartButton.gameObject.SetActive(true);
             
