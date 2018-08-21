@@ -1073,9 +1073,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1f7f3d0cfcd4bff4aaf032567e169b90, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  PlanetSpacing: 8
+  PlanetSpacing: 15
   Noise: 1.5
-  RenderedPlanets: 4
+  RenderedPlanets: 2
   Player: {fileID: 1031204453}
   Mesh: {fileID: 617962587}
   GravityMultiplier: 1
@@ -1107,6 +1107,31 @@ MonoBehaviour:
   acceleration: 500
   system: {fileID: 1694088495}
   ScriptEnabled: 1
+--- !u!61 &1031204458
+BoxCollider2D:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1031204453}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: 0}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0.5, y: 0.5}
+    oldSize: {x: 19.37, y: 12.83}
+    newSize: {x: 19.2, y: 10.8}
+    adaptiveTilingThreshold: 0.5
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  serializedVersion: 2
+  m_Size: {x: 19.37, y: 12.83}
+  m_EdgeRadius: 0
 --- !u!50 &1031204459 stripped
 Rigidbody2D:
   m_PrefabParentObject: {fileID: 50963165848035754, guid: 24d729c7a5d567a4eb1811be57ede31a,
@@ -1443,6 +1468,7 @@ Prefab:
       propertyPath: m_Constraints
       value: 4
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 60564471209540682, guid: 24d729c7a5d567a4eb1811be57ede31a, type: 2}
   m_ParentPrefab: {fileID: 100100000, guid: 24d729c7a5d567a4eb1811be57ede31a, type: 2}
   m_IsPrefabParent: 0
