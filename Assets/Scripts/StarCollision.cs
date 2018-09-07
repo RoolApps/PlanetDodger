@@ -13,6 +13,7 @@ public class StarCollision : MonoBehaviour {
     // Use this for initialization
     void Start () {
         starExplosionPrefab = Resources.Load("Prefabs/StarExplosion", typeof(GameObject));
+        UpdateText();
     }
 	
 	// Update is called once per frame
@@ -20,19 +21,24 @@ public class StarCollision : MonoBehaviour {
 		
 	}
 
+    private void UpdateText()
+    {
+        Score.text = string.Format("Score: {0}", score);
+        Gravity.text = string.Format("Gravity: {0}g", Generator.GravityMultiplier.ToString("n1"));
+    }
+
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if(collision.name == "Star(Clone)")
         {
             score++;
-            Score.text = string.Format("Score: {0}", score);
             var explosion = Instantiate(starExplosionPrefab, collision.gameObject.transform.position, Quaternion.identity);
             Destroy(collision.gameObject);
             Destroy(explosion, 3f);
 
-            float gravityMultiplier = 1.0f + System.Convert.ToSingle(score) / 100;
-            Generator.GravityMultiplier = gravityMultiplier;
-            Gravity.text = string.Format("Gravity: {0}g", gravityMultiplier.ToString("n1"));
+            Generator.GravityMultiplier += 0.01f;
+
+            UpdateText();
         }
     }
 }

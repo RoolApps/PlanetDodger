@@ -17,6 +17,12 @@ public class WorldGenerator : MonoBehaviour {
     // Use this for initialization
     void Start () {
 
+        var settings = GameDifficulty.Settings;
+        if(settings != null)
+        {
+            PlanetSpacing = settings.PlanetSpacing;
+            GravityMultiplier = settings.Gravity;
+        }
         PlanetBoxSize = new Vector2(PlanetSpacing, PlanetSpacing);
     }
 
