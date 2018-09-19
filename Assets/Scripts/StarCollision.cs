@@ -7,7 +7,7 @@ public class StarCollision : MonoBehaviour {
     public TMPro.TextMeshProUGUI Score;
     public TMPro.TextMeshProUGUI Gravity;
     public WorldGenerator Generator;
-    int score = 0;
+    public int score = 0;
     private Object starExplosionPrefab;
 
     // Use this for initialization

@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
+using System.ComponentModel;
+using System.Reflection;
 
 public static class GameDifficulty
 {
@@ -34,6 +36,14 @@ public static class GameDifficulty
             }
         }
 
+        public string DifficultyString
+        {
+            get
+            {
+                return this.difficulty.ToString().Split('.').Last().ToLower();
+            }
+        }
+
         public int PlanetSpacing
         {
             get
@@ -58,7 +68,7 @@ public static class GameDifficulty
         new GameSettings(Difficulty.Hard, 8, 3f)
     };
 
-    private static GameSettings activeSettings = null;
+    private static GameSettings activeSettings = settings.First();
 
     public static void SetDifficulty(Difficulty difficulty)
     {
