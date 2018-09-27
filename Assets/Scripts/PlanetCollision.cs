@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
+using UnityEngine.Advertisements;
 
 public class PlanetCollision : MonoBehaviour {
 
@@ -34,6 +35,35 @@ public class PlanetCollision : MonoBehaviour {
             //{
             //    Smoke.Play();
             //}
+            if(GameSettings.AdsEnabled)
+            {
+                ShowAd();
+            }
+        }
+    }
+
+    private void ShowAd()
+    {
+        if (Advertisement.IsReady("video"))
+        {
+            var options = new ShowOptions { resultCallback = HandleShowResult };
+            Advertisement.Show("video", options);
+        }
+    }
+
+    private void HandleShowResult(ShowResult result)
+    {
+        switch (result)
+        {
+            case ShowResult.Finished:
+                Debug.Log("The ad was successfully shown.");
+                break;
+            case ShowResult.Skipped:
+                Debug.Log("The ad was skipped before reaching the end.");
+                break;
+            case ShowResult.Failed:
+                Debug.LogError("The ad failed to be shown.");
+                break;
         }
     }
 

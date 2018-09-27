@@ -45,6 +45,28 @@ public class MenuController : MonoBehaviour {
         Scores.text = String.Join(Environment.NewLine, scores.Items.Select(score => String.Format("{0}: {1}", score.name, score.score)).ToArray());
     }
 
+    public void SelectShip(String name)
+    {
+        if(name == "Powerful")
+        {
+            var purchaser = GetComponent<Purchaser>();
+            if (!purchaser.PurchasedProducts.Contains(Purchaser.PowerfulSpaceship))
+            {
+                purchaser.BuyPowerfulSpaceship(() => SelectShip(name));
+            }
+        }
+    }
+
+    public void SelectSpace(String name)
+    {
+        
+    }
+
+    public void SelectFlame(String name)
+    {
+        
+    }
+
     private void LateUpdate()
     {
         if(operation != null)

@@ -92,7 +92,7 @@ public class WorldGenerator : MonoBehaviour {
             var radius = Random.Range(0.1f, 0.5f);
             clone.transform.localScale = new Vector3(radius, radius, 1);
             clone.transform.position = position;
-            clone.transform.localRotation = Quaternion.Euler(0, 0, Random.Range(0f, 360f));
+            //clone.transform.localRotation = Quaternion.Euler(0, 0, Random.Range(0f, 360f));
             var spriteRenderer = clone.GetComponent<SpriteRenderer>();
             spriteRenderer.sprite = PlanetSpritesFactory.Get();
             clone.GetComponent<Gravity>().PullMultiplier *= gravityMultiplier;

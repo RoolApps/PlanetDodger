@@ -13,6 +13,8 @@ public class Gravity : MonoBehaviour {
 
     private float GravitationalPull; // Pull force
     private float PullRadius; // Radius to pull
+    private float RotationSpeed;
+    private float Angle = 0;
     private Rigidbody2D PlayerRigidbody;
     private SpriteRenderer PlayerSpriteRenderer;
     private SpriteRenderer PlanetSpriteRenderer;
@@ -29,11 +31,15 @@ public class Gravity : MonoBehaviour {
         var radius = PlanetSpriteRenderer.bounds.size.x / 2;
         PullRadius = radius * 4;
         GravitationalPull = radius * radius * PullMultiplier;
+        RotationSpeed = Random.Range(-1f, 1f);
     }
 
     // Function that runs on every physics frame
     void FixedUpdate()
     {
+        Angle += RotationSpeed;
+        transform.localRotation = Quaternion.Euler(0, 0, Angle);
+
         Vector3 direction = PlanetSpriteRenderer.bounds.center - PlayerSpriteRenderer.bounds.center;
 
         float AngleRad = Mathf.Atan2(direction.y, direction.x);
@@ -64,6 +70,5 @@ public class Gravity : MonoBehaviour {
         float distance = direction.sqrMagnitude * DistanceMultiplier + 1;
 
         PlayerRigidbody.AddForce(direction.normalized * (GravitationalPull / distance) * PlayerRigidbody.mass * Time.fixedDeltaTime);
-
     }
 }
