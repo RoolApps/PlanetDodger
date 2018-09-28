@@ -2796,6 +2796,17 @@ MonoBehaviour:
   Gravity: {fileID: 851382750}
   Generator: {fileID: 1031204455}
   score: 0
+--- !u!114 &1031204457
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1031204453}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 78db68d115eddd045895e52b3908ebcf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!61 &1031204458
 BoxCollider2D:
   m_ObjectHideFlags: 0

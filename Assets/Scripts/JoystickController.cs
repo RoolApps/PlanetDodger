@@ -16,6 +16,11 @@ public class JoystickController : MonoBehaviour {
     private Vector3 center;
 
     // Update is called once per frame
+    private void Awake()
+    {
+        Acceleration = GameSettings.Ship.Acceleration;
+    }
+
     private void FixedUpdate ()
     {
         if (ScriptEnabled && mousePressed)

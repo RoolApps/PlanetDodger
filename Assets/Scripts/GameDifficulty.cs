@@ -17,9 +17,9 @@ public static class GameDifficulty
 
     public class GameSettings
     {
-        private Difficulty difficulty;
-        private int planetSpacing;
-        private float gravity;
+        private readonly Difficulty difficulty;
+        private readonly int planetSpacing;
+        private readonly float gravity;
 
         public GameSettings(Difficulty difficulty, int planetSpacing, float gravity)
         {

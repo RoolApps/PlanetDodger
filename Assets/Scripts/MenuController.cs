@@ -11,6 +11,7 @@ public class MenuController : MonoBehaviour {
     AsyncOperation operation;
     public UnityEngine.UI.Slider Progress;
     public TMPro.TextMeshProUGUI Scores;
+    public SpriteRenderer ShipRenderer;
 
     private GameDifficulty.Difficulty GetDifficulty(string difficultyName)
     {
@@ -47,24 +48,28 @@ public class MenuController : MonoBehaviour {
 
     public void SelectShip(String name)
     {
-        if(name == "Powerful")
+        if (name == "Powerful")
         {
             var purchaser = GetComponent<Purchaser>();
             if (!purchaser.PurchasedProducts.Contains(Purchaser.PowerfulSpaceship))
             {
                 purchaser.BuyPowerfulSpaceship(() => SelectShip(name));
+                return;
+            }
+            else
+            {
+                GameSettings.SetShip(GameSettings.ShipType.Powerful);
             }
         }
-    }
-
-    public void SelectSpace(String name)
-    {
-        
-    }
-
-    public void SelectFlame(String name)
-    {
-        
+        else if (name == "Advanced")
+        {
+            GameSettings.SetShip(GameSettings.ShipType.Advanced);
+        }
+        else if (name == "Basic")
+        {
+            GameSettings.SetShip(GameSettings.ShipType.Basic);
+        }
+        ShipRenderer.sprite = GameSettings.Ship.Sprite;
     }
 
     private void LateUpdate()
