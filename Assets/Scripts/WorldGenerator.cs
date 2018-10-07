@@ -5,30 +5,41 @@ using UnityEngine;
 
 public class WorldGenerator : MonoBehaviour {
 
-    public int PlanetSpacing;
-    public float Noise;
-    public int RenderedPlanets;
-    public GameObject Player;
-    public GameObject Mesh;
-    public float GravityMultiplier = 1.0f;
-
-    private Vector2 PlanetBoxSize;
+    private int PlanetSpacing;
+    private float Noise;
+    private int RenderedPlanets;
     
+    private Vector2 PlanetBoxSize;
+    private float GravityMultiplier = 1.0f;
+
     // Use this for initialization
     void Start () {
 
         var settings = GameDifficulty.Settings;
-        if(settings != null)
-        {
-            PlanetSpacing = settings.PlanetSpacing;
-            GravityMultiplier = settings.Gravity;
-        }
+        PlanetSpacing = settings.PlanetSpacing;
+        GravityMultiplier = settings.Gravity;
+        Noise = settings.Noise;
+        RenderedPlanets = settings.RenderedPlanets;
+        
         PlanetBoxSize = new Vector2(PlanetSpacing, PlanetSpacing);
+        GameSession.Current.SpaceshipCrashed += Current_SpaceshipCrashed;
+        GameSession.Current.GravityChanged += Current_GravityChanged;
+    }
+
+    private void Current_SpaceshipCrashed(object sender, System.EventArgs e)
+    {
+        GameSession.Current.SpaceshipCrashed -= Current_SpaceshipCrashed;
+        GameSession.Current.GravityChanged -= Current_GravityChanged;
+    }
+
+    private void Current_GravityChanged(object sender, GameSession.GravityEventArgs e)
+    {
+        this.GravityMultiplier = e.Gravity;
     }
 
     // Update is called once per frame
-	void Update () {
-        var playerPosition = Player.transform.position;
+    void Update () {
+        var playerPosition = transform.position;
         var playerXBox = System.Convert.ToInt32(playerPosition.x / PlanetSpacing);
         var playerYBox = System.Convert.ToInt32(playerPosition.y / PlanetSpacing);
         
@@ -48,8 +59,9 @@ public class WorldGenerator : MonoBehaviour {
                     new StarredPlanet(
                         new Vector3(
                             x * PlanetSpacing + (y % 2 == 1 ? PlanetSpacing / 2 : 0) + Random.Range(0, Noise),
-                            y * PlanetSpacing + (x % 2 == 0 ? PlanetSpacing / 2 : 0) + Random.Range(0, Noise)),
-                        Player,
+                            y * PlanetSpacing + (x % 2 == 0 ? PlanetSpacing / 2 : 0) + Random.Range(0, Noise),
+                            10),
+                        gameObject,
                         GravityMultiplier);
                 }
             });

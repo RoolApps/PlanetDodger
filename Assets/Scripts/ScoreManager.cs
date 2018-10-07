@@ -64,7 +64,7 @@ public static class ScoreManager {
         var result = new Score
         {
             score = score,
-            name = "Geslot",
+            name = GameSettings.Current.Nickname,
             difficulty = GameDifficulty.Settings.DifficultyString
         };
         var jsonData = JsonUtility.ToJson(result);

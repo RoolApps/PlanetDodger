@@ -1,21 +1,36 @@
 ﻿using UnityEngine;
 using UnityEditor;
+using System.Collections.Generic;
+using System.Linq;
 
 public class Ship
 {
-    private readonly float acceleration = 0f;
-    private readonly Sprite sprite = null;
-
-    public Ship(float acceleration, string spriteName)
+    private static Ship[] ships = new Ship[]
     {
-        this.acceleration = acceleration;
-        this.sprite = LoadSprite(spriteName);
+        new Ship(500f, "Basic"),
+        new Ship(750f, "Advanced"),
+        new Ship(1000f, "Powerful")
+    };
+
+    public static Ship GetShip(string name)
+    {
+        return ships.Single(ship => ship.shipName == name);
     }
 
-    private Sprite LoadSprite(string spriteName)
+    private readonly float acceleration = 0f;
+    private readonly Object prefab = null;
+    private readonly string shipName = null;
+
+    public Ship(float acceleration, string shipName)
     {
-        var texture = Resources.Load<Texture2D>(string.Format("Sprites/Ship{0}", spriteName));
-        return Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f));
+        this.acceleration = acceleration;
+        this.shipName = shipName;
+        this.prefab = LoadPrefab(shipName);
+    }
+
+    private Object LoadPrefab(string spriteName)
+    {
+        return Resources.Load(string.Format("Prefabs/{0}Ship", shipName), typeof(GameObject));
     }
 
     public float Acceleration
@@ -26,11 +41,11 @@ public class Ship
         }
     }
 
-    public Sprite Sprite
+    public Object Prefab
     {
         get
         {
-            return sprite;
+            return prefab;
         }
     }
 }

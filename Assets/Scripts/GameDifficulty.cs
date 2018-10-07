@@ -7,6 +7,8 @@ using System.Reflection;
 
 public static class GameDifficulty
 {
+    public static event System.EventHandler SettingsChanged;
+
     public enum Difficulty
     {
         Unknown,
@@ -17,55 +19,39 @@ public static class GameDifficulty
 
     public class GameSettings
     {
-        private readonly Difficulty difficulty;
-        private readonly int planetSpacing;
-        private readonly float gravity;
-
-        public GameSettings(Difficulty difficulty, int planetSpacing, float gravity)
+        public GameSettings(Difficulty difficulty, int planetSpacing, float gravity, float noise, int renderedPlanets)
         {
-            this.difficulty = difficulty;
-            this.planetSpacing = planetSpacing;
-            this.gravity = gravity;
+            Difficulty = difficulty;
+            PlanetSpacing = planetSpacing;
+            Gravity = gravity;
+            Noise = noise;
+            RenderedPlanets = renderedPlanets;
         }
 
-        public Difficulty Difficulty
-        {
-            get
-            {
-                return this.difficulty;
-            }
-        }
+        public Difficulty Difficulty { get; private set; }
 
         public string DifficultyString
         {
             get
             {
-                return this.difficulty.ToString().Split('.').Last().ToLower();
+                return Difficulty.ToString().Split('.').Last().ToLower();
             }
         }
 
-        public int PlanetSpacing
-        {
-            get
-            {
-                return this.planetSpacing;
-            }
-        }
+        public int PlanetSpacing { get; private set; }
 
-        public float Gravity
-        {
-            get
-            {
-                return this.gravity;
-            }
-        }
+        public float Noise { get; private set; }
+
+        public int RenderedPlanets { get; private set; }
+
+        public float Gravity { get; private set; }
     }
 
     private static GameSettings[] settings = new GameSettings[]
     {
-        new GameSettings(Difficulty.Easy, 15, 1f),
-        new GameSettings(Difficulty.Medium, 11, 2f),
-        new GameSettings(Difficulty.Hard, 8, 3f)
+        new GameSettings(Difficulty.Easy, 15, 1f, 1.5f, 4),
+        new GameSettings(Difficulty.Medium, 11, 2f, 1.5f, 5),
+        new GameSettings(Difficulty.Hard, 8, 3f, 1.5f, 6)
     };
 
     private static GameSettings activeSettings = settings.First();
@@ -73,6 +59,10 @@ public static class GameDifficulty
     public static void SetDifficulty(Difficulty difficulty)
     {
         activeSettings = settings.Single(setting => setting.Difficulty == difficulty);
+        if(SettingsChanged != null)
+        {
+            SettingsChanged(null, System.EventArgs.Empty);
+        }
     }
 
     public static GameSettings Settings

@@ -17,11 +17,13 @@ public class SceneController : MonoBehaviour {
 
     public void RestartGame()
     {
+        GameSession.Current.Reset();
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 
     public void LoadMainMenu()
     {
+        GameSession.Current.Reset();
         SceneManager.LoadScene("Scenes/MenuScene");
     }
 }

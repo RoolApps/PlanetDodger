@@ -6,12 +6,63 @@ using UnityEngine.Networking;
 using UnityEngine.SceneManagement;
 using System.Linq;
 
-public class MenuController : MonoBehaviour {
-
+public class MenuController : MonoBehaviour
+{
     AsyncOperation operation;
     public UnityEngine.UI.Slider Progress;
     public TMPro.TextMeshProUGUI Scores;
     public SpriteRenderer ShipRenderer;
+    public UnityEngine.UI.Button SubmitNucknameButton;
+    public UnityEngine.UI.InputField NicknameField;
+    public GameObject NicknamePanel;
+    public GameObject MainMenuPanel;
+    public UnityEngine.UI.Button AdvancedShipButton;
+    public UnityEngine.UI.Button PowerfulShipButton;
+
+    private Purchaser purchaser;
+
+    private void Awake()
+    {
+        purchaser = GetComponent<Purchaser>();
+        if (purchaser.IsInitialized())
+        {
+            PurchaserInitialized();
+        }
+        else
+        {
+            purchaser.Initialized += PurchaserInitialized;
+        }
+
+        if (GameSettings.Current.Nickname == null)
+        {
+            MainMenuPanel.SetActive(false);
+            NicknamePanel.SetActive(true);
+            return;
+        }
+        if (GameSettings.Current.AdvancedShipUnlocked)
+        {
+            AdvancedShipButton.interactable = true;
+        }
+        if (GameSettings.Current.SelectedShip != null && GameSettings.Current.SelectedShip.Any())
+        {
+            LoadShip(GameSettings.Current.SelectedShip);
+        }
+    }
+
+    private void PurchaserInitialized(object sender, EventArgs e)
+    {
+        purchaser.Initialized -= PurchaserInitialized;
+        PurchaserInitialized();
+    }
+
+    private void PurchaserInitialized()
+    {
+        if (purchaser.PurchasedProducts.Contains(Purchaser.NoAds))
+        {
+            GameSettings.Current.AdsDisabled = true;
+        }
+        PowerfulShipButton.interactable = true;
+    }
 
     private GameDifficulty.Difficulty GetDifficulty(string difficultyName)
     {
@@ -28,7 +79,7 @@ public class MenuController : MonoBehaviour {
         }
     }
 
-	public void StartGame(string difficultyName)
+    public void StartGame(string difficultyName)
     {
         GameDifficulty.Difficulty difficulty = GetDifficulty(difficultyName);
         GameDifficulty.SetDifficulty(difficulty);
@@ -53,28 +104,29 @@ public class MenuController : MonoBehaviour {
             var purchaser = GetComponent<Purchaser>();
             if (!purchaser.PurchasedProducts.Contains(Purchaser.PowerfulSpaceship))
             {
-                purchaser.BuyPowerfulSpaceship(() => SelectShip(name));
+                purchaser.BuyPowerfulSpaceship(() => LoadShip(name));
                 return;
             }
-            else
-            {
-                GameSettings.SetShip(GameSettings.ShipType.Powerful);
-            }
         }
-        else if (name == "Advanced")
+        LoadShip(name);
+    }
+
+    public void BuyNoAds()
+    {
+        purchaser.BuyNoAds(() =>
         {
-            GameSettings.SetShip(GameSettings.ShipType.Advanced);
-        }
-        else if (name == "Basic")
-        {
-            GameSettings.SetShip(GameSettings.ShipType.Basic);
-        }
-        ShipRenderer.sprite = GameSettings.Ship.Sprite;
+            GameSettings.Current.AdsDisabled = true;
+        });
+    }
+
+    private void LoadShip(String name)
+    {
+        GameSettings.Current.SelectedShip = name;
     }
 
     private void LateUpdate()
     {
-        if(operation != null)
+        if (operation != null)
         {
             Progress.value = operation.progress;
         }
@@ -83,5 +135,18 @@ public class MenuController : MonoBehaviour {
     public void CloseGame()
     {
         Application.Quit();
+    }
+
+    public void NicknameTextChanged(String text)
+    {
+        SubmitNucknameButton.interactable = NicknameField.text.Any();
+    }
+
+    public void SubmitNicknameClicked()
+    {
+        GameSettings.Current.Nickname = NicknameField.text;
+        GameSettings.Current.SelectedShip = "Basic";
+        NicknamePanel.SetActive(false);
+        MainMenuPanel.SetActive(true);
     }
 }

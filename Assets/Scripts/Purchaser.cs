@@ -9,10 +9,13 @@ public class Purchaser : MonoBehaviour, IStoreListener
     private static IStoreController m_StoreController;
     private static IExtensionProvider m_StoreExtensionProvider;
 
-    private Dictionary<String, Action> callbacksHolder = new Dictionary<String, Action>();
+    private Action callbackHolder = null;
+    private static Purchaser purchaser;
 
     public const string NoAds = "noads";
     public const string PowerfulSpaceship = "powerfulspaceship";
+
+    public event EventHandler Initialized;
 
     private List<String> purchasedProducts = new List<String>();
 
@@ -26,15 +29,16 @@ public class Purchaser : MonoBehaviour, IStoreListener
 
     private void Start()
     {
-        if (m_StoreController == null)
+        if (purchaser == null)
         {
-            InitializePurchasing();
+            purchaser = this;
+            purchaser.InitializePurchasing();
         }
     }
 
     public void InitializePurchasing()
     {
-        if (IsInitialized())
+        if (purchaser.IsInitialized())
         {
             return;
         }
@@ -42,30 +46,30 @@ public class Purchaser : MonoBehaviour, IStoreListener
         var builder = ConfigurationBuilder.Instance(StandardPurchasingModule.Instance());
         builder.AddProduct(NoAds, ProductType.NonConsumable);
         builder.AddProduct(PowerfulSpaceship, ProductType.NonConsumable);
-        UnityPurchasing.Initialize(this, builder);
+        UnityPurchasing.Initialize(purchaser, builder);
     }
 
 
-    private bool IsInitialized()
+    public bool IsInitialized()
     {
         return m_StoreController != null && m_StoreExtensionProvider != null;
     }
 
     public void BuyNoAds(Action callback)
     {
-        BuyProductID(NoAds, callback);
+        purchaser.BuyProductID(NoAds, callback);
     }
 
     public void BuyPowerfulSpaceship(Action callback)
     {
-        BuyProductID(PowerfulSpaceship, callback);
+        purchaser.BuyProductID(PowerfulSpaceship, callback);
     }
 
     void BuyProductID(string productId, Action callback)
     {
-        if (IsInitialized())
+        if (purchaser.IsInitialized())
         {
-            if (purchasedProducts.Contains(productId))
+            if (purchaser.purchasedProducts.Contains(productId))
             {
                 Debug.Log("BuyProuctID: Product already bought");
             }
@@ -74,9 +78,9 @@ public class Purchaser : MonoBehaviour, IStoreListener
                 Product product = m_StoreController.products.WithID(productId);
 
                 if (product != null && product.availableToPurchase)
-                {
+                {   
                     Debug.Log(string.Format("Purchasing product asychronously: '{0}'", product.definition.id));
-                    callbacksHolder[productId] = callback;
+                    purchaser.callbackHolder = callback;
                     m_StoreController.InitiatePurchase(product);
                 }
                 else
@@ -94,7 +98,7 @@ public class Purchaser : MonoBehaviour, IStoreListener
 
     public void RestorePurchases()
     {
-        if (!IsInitialized())
+        if (!purchaser.IsInitialized())
         {
             Debug.Log("RestorePurchases FAIL. Not initialized.");
             return;
@@ -108,11 +112,11 @@ public class Purchaser : MonoBehaviour, IStoreListener
 
         m_StoreController = controller;
         m_StoreExtensionProvider = extensions;
-        purchasedProducts.AddRange(controller.products.all.Where(product => product.hasReceipt).Select(product => product.definition.storeSpecificId));
+        purchaser.purchasedProducts.AddRange(controller.products.all.Where(product => product.hasReceipt).Select(product => product.definition.storeSpecificId));
 
-        if (purchasedProducts.Contains(NoAds))
+        if(purchaser.Initialized != null)
         {
-            GameSettings.DisableAds();
+            purchaser.Initialized(this, EventArgs.Empty);
         }
     }
 
@@ -125,16 +129,15 @@ public class Purchaser : MonoBehaviour, IStoreListener
 
     public PurchaseProcessingResult ProcessPurchase(PurchaseEventArgs args)
     {
-        purchasedProducts.Add(args.purchasedProduct.definition.storeSpecificId);
-        callbacksHolder[args.purchasedProduct.definition.storeSpecificId]();
-        callbacksHolder.Remove(args.purchasedProduct.definition.storeSpecificId);
+        purchaser.purchasedProducts.Add(args.purchasedProduct.definition.storeSpecificId);
+        purchaser.callbackHolder();
+        purchaser.callbackHolder = null;
         return PurchaseProcessingResult.Complete;
     }
 
-
     public void OnPurchaseFailed(Product product, PurchaseFailureReason failureReason)
     {
-        callbacksHolder.Remove(product.definition.storeSpecificId);
         Debug.Log(string.Format("OnPurchaseFailed: FAIL. Product: '{0}', PurchaseFailureReason: {1}", product.definition.storeSpecificId, failureReason));
+        purchaser.callbackHolder = null;
     }
 }
