@@ -18,7 +18,8 @@ public class ShipDestroyedUIController : MonoBehaviour {
         GameSession.Current.SpaceshipCrashed -= Current_SpaceshipCrashed;
         MenuPanel.SetActive(true);
         CameraShaker.ShakeOnce(20, 1, 0, 2);
-        ScoreManager.SubmitScore(this, GameSession.Current.Score, DisplayMenu);
+        ScoreManager.SubmitScore(this, GameSession.Current.Score);
+        DisplayMenu();
     }
 
     private void DisplayMenu()

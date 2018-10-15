@@ -153,7 +153,7 @@ PlayerSettings:
   applicationIdentifier:
     Android: com.roolapps.planetdodger
   buildNumber: {}
-  AndroidBundleVersionCode: 11
+  AndroidBundleVersionCode: 12
   AndroidMinSdkVersion: 16
   AndroidTargetSdkVersion: 26
   AndroidPreferredInstallLocation: 1

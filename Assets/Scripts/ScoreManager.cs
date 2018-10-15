@@ -29,9 +29,9 @@ public static class ScoreManager {
         behaviour.StartCoroutine(GetScores(difficultyName, callback));
     }
 
-    public static void SubmitScore(MonoBehaviour behaviour, int score, Action callback)
+    public static void SubmitScore(MonoBehaviour behaviour, int score)
     {
-        behaviour.StartCoroutine(SubmitScore(score, callback));
+        behaviour.StartCoroutine(SubmitScore(score));
     }
 
     private static void SetHeaders(UnityWebRequest request)
@@ -59,7 +59,7 @@ public static class ScoreManager {
         }
     }
 
-    private static IEnumerator SubmitScore(int score, Action callback)
+    private static IEnumerator SubmitScore(int score)
     {
         var result = new Score
         {
@@ -74,15 +74,6 @@ public static class ScoreManager {
             www.method = "POST";
             SetHeaders(www);
             yield return www.Send();
-
-            if (www.isNetworkError || www.isHttpError)
-            {
-                Debug.Log(www.error);
-            }
-            else
-            {
-                callback();
-            }
         }
     }
 }
