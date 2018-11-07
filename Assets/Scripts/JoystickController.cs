@@ -16,6 +16,7 @@ public class JoystickController : MonoBehaviour {
     private bool scriptEnabled = false;
     private bool mousePressed = false;
     private Vector3 center;
+    private const float maxSpeed = 7;
 
     // Update is called once per frame
     private void Awake()
@@ -63,7 +64,11 @@ public class JoystickController : MonoBehaviour {
             float AngleDeg = (180 / Mathf.PI) * AngleRad;
             player.rotation = Quaternion.Euler(0, 0, AngleDeg);
 
-            playerRigidbody.AddForce(direction.normalized * Acceleration * Time.fixedDeltaTime * transform.localPosition.magnitude / JoystickRadius);
+            var force = direction.normalized * Acceleration * Time.fixedDeltaTime * transform.localPosition.magnitude / JoystickRadius;
+            var speed = playerRigidbody.velocity;
+            force.x = Mathf.Clamp(force.x, -maxSpeed - Mathf.Clamp(speed.x, -maxSpeed, 0), maxSpeed - Mathf.Clamp(speed.x, 0, maxSpeed));
+            force.y = Mathf.Clamp(force.y, -maxSpeed - Mathf.Clamp(speed.y, -maxSpeed, 0), maxSpeed - Mathf.Clamp(speed.y, 0, maxSpeed));
+            playerRigidbody.AddForce(force);
             foreach (var system in systems)
             {
                 if (system.isStopped)

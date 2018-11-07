@@ -62,7 +62,8 @@ public class WorldGenerator : MonoBehaviour {
                             y * PlanetSpacing + (x % 2 == 0 ? PlanetSpacing / 2 : 0) + Random.Range(0, Noise),
                             10),
                         gameObject,
-                        GravityMultiplier);
+                        GravityMultiplier,
+                        PlanetSpacing);
                 }
             });
         });
@@ -83,18 +84,25 @@ public class WorldGenerator : MonoBehaviour {
 
     class StarredPlanet
     {
-        static float starDistanceMultiplier = 2f;
+        const float starDistanceMultiplier = 2f;
+        const int starsCount = 5;
+        static Object rareStarPrefab = Resources.Load("Prefabs/RareStar", typeof(GameObject));
         static Object starPrefab = Resources.Load("Prefabs/Star", typeof(GameObject));
         static Object planetPrefab = Resources.Load("Prefabs/Planet", typeof(GameObject));
         static GameObject shipParticleSystemPrefab = Resources.Load("Prefabs/ShipParticleSystem", typeof(GameObject)) as GameObject;
 
-        public StarredPlanet(Vector3 position, GameObject player, float gravityMultiplier)
+        public StarredPlanet(Vector3 position, GameObject player, float gravityMultiplier, float starsSpacing)
         {
             var planet = CreatePlanet(position, gravityMultiplier);
             var planetBounds = planet.GetComponent<SpriteRenderer>().bounds;
             var planetRadius = planetBounds.size.magnitude / ( Mathf.Sqrt(2) * 2 );
             var planetCenter = planetBounds.center;
-            CreateStar(planetCenter, planetRadius);
+            CreateStar(rareStarPrefab, planetCenter, Random.Range(0, 2 * Mathf.PI), planetRadius);
+            Enumerable.Range(0, starsCount).ToList().ForEach(i =>
+            {
+                var multiplier = Random.Range(0.2f, 0.5f);
+                CreateStar(starPrefab, planetCenter, 2f * Mathf.PI * i / starsCount, starsSpacing * multiplier);
+            });
             CreateShipParticleSystem(planet, player);
         }
 
@@ -121,10 +129,9 @@ public class WorldGenerator : MonoBehaviour {
             return clone;
         }
 
-        private GameObject CreateStar(Vector3 position, float planetRadius)
+        private GameObject CreateStar(Object prefab, Vector3 position, float angle, float planetRadius)
         {
-            GameObject clone = Instantiate(starPrefab, Vector3.zero, Quaternion.identity) as GameObject;
-            var angle = Random.Range(0, 2 * Mathf.PI);
+            GameObject clone = Instantiate(prefab, Vector3.zero, Quaternion.identity) as GameObject;
             var starOffset = new Vector3(Mathf.Cos(angle) * planetRadius * starDistanceMultiplier, Mathf.Sin(angle) * planetRadius * starDistanceMultiplier);
             clone.transform.position = position + starOffset;
             return clone;

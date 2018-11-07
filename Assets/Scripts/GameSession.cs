@@ -61,10 +61,20 @@ public class GameSession {
         }
     }
 
-    public void IncreaseScore()
+    private void IncreaseScore(int increment)
     {
-        SetScore(score + 1);
+        SetScore(score + increment);
         SetGravity(initialGravity + ((float)score / 100));
+    }
+
+    public void ScoreStar()
+    {
+        IncreaseScore(1);
+    }
+
+    public void ScoreRareStar()
+    {
+        IncreaseScore(10);
     }
 
     public void CrashSpaceship()

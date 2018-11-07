@@ -18,12 +18,17 @@ public class PlanetCollision : MonoBehaviour {
         {
             AlreadyCollided = true;
             Explosion.SetActive(true);
-            GameSession.Current.CrashSpaceship();
-
-            if (GameSession.Current.Score >= 100 && !GameSettings.Current.AdvancedShipUnlocked)
+            var score = GameSession.Current.Score;
+            if (GameSettings.Current.Highscore < score)
+            {
+                GameSettings.Current.Highscore = score;
+            }
+            if (score >= 100 && !GameSettings.Current.AdvancedShipUnlocked)
             {
                 GameSettings.Current.AdvancedShipUnlocked = true;
             }
+            GameSession.Current.CrashSpaceship();
+            
             if (!GameSettings.Current.AdsDisabled)
             {
                 var now = DateTime.Now;

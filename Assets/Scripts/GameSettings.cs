@@ -4,6 +4,7 @@ using System;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.IO;
 using System.ComponentModel;
+using System.Text.RegularExpressions;
 
 public static class GameSettings
 {
@@ -42,7 +43,21 @@ public static class GameSettings
             data = bf.Deserialize(file) as GameData;
             file.Close();
         }
+        ValidateData(data);
         return data;
+    }
+
+    private static void ValidateData(GameData data)
+    {
+        if (data != null)
+        {
+            var nickname = data.Nickname;
+            var match = Regex.Match(nickname, @"[a-zA-Z0-9]+");
+            if (!match.Success)
+            {
+                data.Nickname = null;
+            }
+        }
     }
 
     private static void Save()
@@ -64,6 +79,7 @@ public class GameData : INotifyPropertyChanged
     private bool advancedShipUnlocked = false;
     private String selectedShip = null;
     private bool adsDisabled = false;
+    private int highscore = 0;
 
     public event PropertyChangedEventHandler PropertyChanged;
 
@@ -83,7 +99,6 @@ public class GameData : INotifyPropertyChanged
                     PropertyChanged(this, new PropertyChangedEventArgs("Nickname"));
                 }
             }
-
         }
     }
     public bool AdvancedShipUnlocked
@@ -137,6 +152,24 @@ public class GameData : INotifyPropertyChanged
                 if (PropertyChanged != null)
                 {
                     PropertyChanged(this, new PropertyChangedEventArgs("AdsDisabled"));
+                }
+            }
+        }
+    }
+    public int Highscore
+    {
+        get
+        {
+            return highscore;
+        }
+        set
+        {
+            if (highscore != value)
+            {
+                highscore = value;
+                if (PropertyChanged != null)
+                {
+                    PropertyChanged(this, new PropertyChangedEventArgs("Highscore"));
                 }
             }
         }

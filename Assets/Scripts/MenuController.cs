@@ -5,6 +5,7 @@ using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.SceneManagement;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 public class MenuController : MonoBehaviour
 {
@@ -38,6 +39,10 @@ public class MenuController : MonoBehaviour
             MainMenuPanel.SetActive(false);
             NicknamePanel.SetActive(true);
             return;
+        }
+        else
+        {
+            Debug.Log(String.Format("Current nickname: {0}", GameSettings.Current.Nickname));
         }
         if (GameSettings.Current.AdvancedShipUnlocked)
         {
@@ -88,7 +93,7 @@ public class MenuController : MonoBehaviour
 
     public void LoadScores(string difficultyName)
     {
-        Scores.text = "LOADING...";
+        Scores.text = "Loading...";
         ScoreManager.GetScores(this, difficultyName, ScoresLoaded);
     }
 
@@ -137,9 +142,18 @@ public class MenuController : MonoBehaviour
         Application.Quit();
     }
 
-    public void NicknameTextChanged(String text)
+    public void NicknameTextChanged(String notUsed)
     {
-        SubmitNucknameButton.interactable = NicknameField.text.Any();
+        var originalText = NicknameField.text;
+        var text = Regex.Replace(originalText, @"[^a-zA-Z0-9 ]", "");
+        if (text != originalText)
+        {
+            NicknameField.text = text;
+        }
+        else
+        {
+            SubmitNucknameButton.interactable = NicknameField.text.Any();
+        }
     }
 
     public void SubmitNicknameClicked()

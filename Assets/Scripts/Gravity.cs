@@ -54,19 +54,8 @@ public class Gravity : MonoBehaviour
         {
             return;
         }
-        Angle += RotationSpeed;
-        transform.localRotation = Quaternion.Euler(0, 0, Angle);
-
+        
         Vector3 direction = PlanetSpriteRenderer.bounds.center - PlayerSpriteRenderer.bounds.center;
-
-        float AngleRad = Mathf.Atan2(direction.y, direction.x);
-        float AngleDeg = (180 / Mathf.PI) * AngleRad;
-        ShipParticleSystem.transform.rotation = Quaternion.Euler(180 - AngleDeg, 90, -90);
-
-        var main = ShipParticleSystem.main;
-        main.startSpeedMultiplier = Mathf.Sqrt(direction.magnitude);
-
-        PlanetCircleSpriteRenderer.color = new Color(1, 1, 1, Mathf.Clamp(1f - (direction.magnitude - PullRadius * 0.5f) / (PullRadius * 0.5f), 0f, 1f));
 
         if (direction.magnitude > PullRadius)
         {
@@ -82,10 +71,25 @@ public class Gravity : MonoBehaviour
             {
                 ShipParticleSystem.Play();
             }
+
+            float AngleRad = Mathf.Atan2(direction.y, direction.x);
+            float AngleDeg = 180 / Mathf.PI * AngleRad;
+            ShipParticleSystem.transform.rotation = Quaternion.Euler(180 - AngleDeg, 90, -90);
+
+            var main = ShipParticleSystem.main;
+            main.startSpeedMultiplier = Mathf.Sqrt(direction.magnitude);
+
+            PlanetCircleSpriteRenderer.color = new Color(1, 1, 1, Mathf.Clamp(1f - (direction.magnitude - PullRadius * 0.5f) / (PullRadius * 0.5f), 0f, 1f));
+
+            float distance = direction.sqrMagnitude * DistanceMultiplier + 1;
+
+            PlayerRigidbody.AddForce(direction.normalized * (GravitationalPull / distance) * PlayerRigidbody.mass * Time.fixedDeltaTime);
         }
+    }
 
-        float distance = direction.sqrMagnitude * DistanceMultiplier + 1;
-
-        PlayerRigidbody.AddForce(direction.normalized * (GravitationalPull / distance) * PlayerRigidbody.mass * Time.fixedDeltaTime);
+    private void LateUpdate()
+    {
+        Angle += RotationSpeed;
+        transform.localRotation = Quaternion.Euler(0, 0, Angle);
     }
 }
