@@ -14,6 +14,7 @@ public class SpaceshipLoader : MonoBehaviour {
         var spaceship = Instantiate(prefab, new Vector3(0, 0, 10), Quaternion.identity) as GameObject;
         GetComponent<Cinemachine.CinemachineVirtualCamera>().Follow = spaceship.transform;
         spaceship.name = "Player";
+        spaceship.layer = 9;
         controller.SetShip(spaceship.transform);
     }
 }
