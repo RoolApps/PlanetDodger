@@ -50,7 +50,7 @@ public class JoystickController : MonoBehaviour {
 
     private void FixedUpdate ()
     {
-        if(player == null)
+        if (player == null)
         {
             return;
         }
@@ -79,7 +79,7 @@ public class JoystickController : MonoBehaviour {
         }
         else
         {
-            foreach(var system in systems)
+            foreach (var system in systems)
             {
                 if (system.isPlaying)
                 {

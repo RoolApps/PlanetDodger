@@ -104,6 +104,7 @@ GameObject:
   - component: {fileID: 114354258485044498}
   - component: {fileID: 114058181692131500}
   - component: {fileID: 114825005658414490}
+  - component: {fileID: 114424386736784764}
   m_Layer: 0
   m_Name: BasicShip
   m_TagString: Untagged
@@ -370,6 +371,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Explosion: {fileID: 1205439644983204}
+--- !u!114 &114424386736784764
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1515368797062334}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 16c78fc6f578c4f4d8ca10e4052f192c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  PullMultiplier: 1000
+  DistanceMultiplier: 5
 --- !u!114 &114825005658414490
 MonoBehaviour:
   m_ObjectHideFlags: 1

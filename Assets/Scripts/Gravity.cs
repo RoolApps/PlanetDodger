@@ -5,91 +5,70 @@ using UnityEngine;
 
 public class Gravity : MonoBehaviour
 {
-
-    // Use this for initialization
-
     public float PullMultiplier;
-    public float DistanceMultiplier; // Factor by which the distance affects force
-    public ParticleSystem ShipParticleSystem;
-
-    private float GravitationalPull; // Pull force
-    private float PullRadius; // Radius to pull
-    private float RotationSpeed;
-    private float Angle = 0;
+    public float DistanceMultiplier;
+    
     private Rigidbody2D PlayerRigidbody;
     private SpriteRenderer PlayerSpriteRenderer;
-    private SpriteRenderer PlanetSpriteRenderer;
-    private SpriteRenderer PlanetCircleSpriteRenderer;
+    private float GravityMultiplier = 1f;
 
-    private bool isInitialized = false;
-
-    private void Start()
+    private void Awake()
     {
+        PlayerRigidbody = gameObject.GetComponent<Rigidbody2D>();
+        PlayerSpriteRenderer = gameObject.GetComponent<SpriteRenderer>();
 
+        GameSession.Current.SpaceshipCrashed += Current_SpaceshipCrashed;
+        GameSession.Current.GravityChanged += Current_GravityChanged;
     }
 
-    private bool Initialize()
+    private void Current_SpaceshipCrashed(object sender, System.EventArgs e)
     {
-        var player = GameObject.Find("Player");
-        if (player != null)
-        {
-            PlayerRigidbody = player.GetComponent<Rigidbody2D>();
-            PlayerSpriteRenderer = player.GetComponent<SpriteRenderer>();
-            PlanetSpriteRenderer = GetComponent<SpriteRenderer>();
-            PlanetCircleSpriteRenderer = GetComponentsInChildren<SpriteRenderer>().Single(renderer => renderer.gameObject.name == "GravityCircle");
-
-            var radius = PlanetSpriteRenderer.bounds.size.x / 2;
-            PullRadius = radius * 4;
-            GravitationalPull = radius * radius * PullMultiplier;
-            RotationSpeed = Random.Range(-1f, 1f);
-            isInitialized = true;
-        }
-        return isInitialized;
+        GameSession.Current.SpaceshipCrashed -= Current_SpaceshipCrashed;
+        GameSession.Current.GravityChanged -= Current_GravityChanged;
     }
 
-    // Function that runs on every physics frame
-    void FixedUpdate()
+    private void Current_GravityChanged(object sender, GameSession.GravityEventArgs e)
     {
-        if (!(isInitialized || Initialize()))
-        {
-            return;
-        }
-        
-        Vector3 direction = PlanetSpriteRenderer.bounds.center - PlayerSpriteRenderer.bounds.center;
+        this.GravityMultiplier = e.Gravity;
+    }
 
-        if (direction.magnitude > PullRadius)
+    private void FixedUpdate()
+    {
+        var planets = Physics2D.OverlapCircleAll(PlayerSpriteRenderer.bounds.center, 20).Select(collider => collider.gameObject).Where(gameObject => gameObject.name == "Planet(Clone)");
+        foreach (var planetGameObject in planets)
         {
-            if (ShipParticleSystem.isPlaying)
+            var planet = planetGameObject.GetComponent<Planet>();
+            var shipParticleSystem = planet.ShipParticleSystem;
+
+            Vector3 direction = planet.Center - PlayerSpriteRenderer.bounds.center;
+            planet.CircleSpriteRenderer.color = new Color(1, 1, 1, Mathf.Clamp(1f - (direction.magnitude - planet.PullRadius * 0.5f) / (planet.PullRadius * 0.5f), 0f, 1f));
+
+            if (direction.magnitude > planet.PullRadius)
             {
-                ShipParticleSystem.Stop();
+                if (shipParticleSystem.isPlaying)
+                {
+                    shipParticleSystem.Stop();
+                }
             }
-            return;
-        }
-        else
-        {
-            if (!ShipParticleSystem.isPlaying)
+            else
             {
-                ShipParticleSystem.Play();
+                if (!shipParticleSystem.isPlaying)
+                {
+                    shipParticleSystem.Play();
+                }
+
+                float AngleRad = Mathf.Atan2(direction.y, direction.x);
+                float AngleDeg = 180 / Mathf.PI * AngleRad;
+                shipParticleSystem.transform.rotation = Quaternion.Euler(180 - AngleDeg, 90, -90);
+
+                var main = shipParticleSystem.main;
+                main.startSpeedMultiplier = Mathf.Sqrt(direction.magnitude);
+
+                float distance = direction.sqrMagnitude * DistanceMultiplier + 1;
+
+                var gravitationalPull = planet.Radius * planet.Radius * PullMultiplier * GravityMultiplier;
+                PlayerRigidbody.AddForce(direction.normalized * (gravitationalPull / distance) * PlayerRigidbody.mass * Time.fixedDeltaTime);
             }
-
-            float AngleRad = Mathf.Atan2(direction.y, direction.x);
-            float AngleDeg = 180 / Mathf.PI * AngleRad;
-            ShipParticleSystem.transform.rotation = Quaternion.Euler(180 - AngleDeg, 90, -90);
-
-            var main = ShipParticleSystem.main;
-            main.startSpeedMultiplier = Mathf.Sqrt(direction.magnitude);
-
-            PlanetCircleSpriteRenderer.color = new Color(1, 1, 1, Mathf.Clamp(1f - (direction.magnitude - PullRadius * 0.5f) / (PullRadius * 0.5f), 0f, 1f));
-
-            float distance = direction.sqrMagnitude * DistanceMultiplier + 1;
-
-            PlayerRigidbody.AddForce(direction.normalized * (GravitationalPull / distance) * PlayerRigidbody.mass * Time.fixedDeltaTime);
         }
-    }
-
-    private void LateUpdate()
-    {
-        Angle += RotationSpeed;
-        transform.localRotation = Quaternion.Euler(0, 0, Angle);
     }
 }

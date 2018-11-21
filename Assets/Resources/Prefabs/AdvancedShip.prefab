@@ -135,6 +135,7 @@ GameObject:
   - component: {fileID: 114520115488944176}
   - component: {fileID: 114526173252989286}
   - component: {fileID: 114092497649848752}
+  - component: {fileID: 114420148355881538}
   m_Layer: 0
   m_Name: AdvancedShip
   m_TagString: Untagged
@@ -327,6 +328,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 61b0444c668441f40a39518008289eca, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &114420148355881538
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1958554365480562}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 16c78fc6f578c4f4d8ca10e4052f192c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  PullMultiplier: 1000
+  DistanceMultiplier: 5
 --- !u!114 &114520115488944176
 MonoBehaviour:
   m_ObjectHideFlags: 1

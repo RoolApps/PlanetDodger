@@ -10,31 +10,16 @@ public class WorldGenerator : MonoBehaviour {
     private int RenderedPlanets;
     
     private Vector2 PlanetBoxSize;
-    private float GravityMultiplier = 1.0f;
 
     // Use this for initialization
     void Start () {
 
         var settings = GameDifficulty.Settings;
         PlanetSpacing = settings.PlanetSpacing;
-        GravityMultiplier = settings.Gravity;
         Noise = settings.Noise;
         RenderedPlanets = settings.RenderedPlanets;
         
         PlanetBoxSize = new Vector2(PlanetSpacing, PlanetSpacing);
-        GameSession.Current.SpaceshipCrashed += Current_SpaceshipCrashed;
-        GameSession.Current.GravityChanged += Current_GravityChanged;
-    }
-
-    private void Current_SpaceshipCrashed(object sender, System.EventArgs e)
-    {
-        GameSession.Current.SpaceshipCrashed -= Current_SpaceshipCrashed;
-        GameSession.Current.GravityChanged -= Current_GravityChanged;
-    }
-
-    private void Current_GravityChanged(object sender, GameSession.GravityEventArgs e)
-    {
-        this.GravityMultiplier = e.Gravity;
     }
 
     // Update is called once per frame
@@ -62,7 +47,6 @@ public class WorldGenerator : MonoBehaviour {
                             y * PlanetSpacing + (x % 2 == 0 ? PlanetSpacing / 2 : 0) + Random.Range(0, Noise),
                             10),
                         gameObject,
-                        GravityMultiplier,
                         PlanetSpacing);
                 }
             });
@@ -91,9 +75,9 @@ public class WorldGenerator : MonoBehaviour {
         static Object planetPrefab = Resources.Load("Prefabs/Planet", typeof(GameObject));
         static GameObject shipParticleSystemPrefab = Resources.Load("Prefabs/ShipParticleSystem", typeof(GameObject)) as GameObject;
 
-        public StarredPlanet(Vector3 position, GameObject player, float gravityMultiplier, float starsSpacing)
+        public StarredPlanet(Vector3 position, GameObject player, float starsSpacing)
         {
-            var planet = CreatePlanet(position, gravityMultiplier);
+            var planet = CreatePlanet(position);
             var planetBounds = planet.GetComponent<SpriteRenderer>().bounds;
             var planetRadius = planetBounds.size.magnitude / ( Mathf.Sqrt(2) * 2 );
             var planetCenter = planetBounds.center;
@@ -106,23 +90,22 @@ public class WorldGenerator : MonoBehaviour {
             CreateShipParticleSystem(planet, player);
         }
 
-        private GameObject CreatePlanet(Vector3 position, float gravityMultiplier)
+        private GameObject CreatePlanet(Vector3 position)
         {
             GameObject clone = Instantiate(planetPrefab, Vector3.zero, Quaternion.identity) as GameObject;
-            var radius = Random.Range(0.1f, 0.5f);
+            var radius = Random.Range(0.3f, 1.5f);
             clone.transform.localScale = new Vector3(radius, radius, 1);
             clone.transform.position = position;
-            //clone.transform.localRotation = Quaternion.Euler(0, 0, Random.Range(0f, 360f));
             var spriteRenderer = clone.GetComponent<SpriteRenderer>();
             spriteRenderer.sprite = PlanetSpritesFactory.Get();
-            clone.GetComponent<Gravity>().PullMultiplier *= gravityMultiplier;
+            clone.GetComponent<Planet>().Radius = radius;
             return clone;
         }
 
         private GameObject CreateShipParticleSystem(GameObject planet, GameObject player)
         {
             GameObject clone = Instantiate(shipParticleSystemPrefab, player.transform);
-            planet.GetComponent<Gravity>().ShipParticleSystem = clone.GetComponent<ParticleSystem>();
+            planet.GetComponent<Planet>().ShipParticleSystem = clone.GetComponent<ParticleSystem>();
             ParticleAttractor particleAttractor = clone.GetComponent<ParticleAttractor>();
             particleAttractor.Target = planet.transform;
             
