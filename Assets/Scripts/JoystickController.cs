@@ -60,9 +60,7 @@ public class JoystickController : MonoBehaviour {
 
             transform.localPosition = direction.normalized * Mathf.Clamp(direction.magnitude / 100, 0, JoystickRadius);
 
-            float AngleRad = Mathf.Atan2(direction.y, direction.x);
-            float AngleDeg = (180 / Mathf.PI) * AngleRad;
-            player.rotation = Quaternion.Euler(0, 0, AngleDeg);
+            player.transform.right = direction;
 
             var force = direction.normalized * Acceleration * Time.fixedDeltaTime * transform.localPosition.magnitude / JoystickRadius;
             var speed = playerRigidbody.velocity;

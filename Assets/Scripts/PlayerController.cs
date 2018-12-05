@@ -5,7 +5,7 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour {
 
     public float acceleration;
-    public ParticleSystem system;
+    //public ParticleSystem system;
     public bool ScriptEnabled;
 
 	// Use this for initialization
@@ -25,14 +25,14 @@ public class PlayerController : MonoBehaviour {
             Rigidbody2D rb = GetComponent<Rigidbody2D>();
             rb.AddForce(direction.normalized * acceleration * Time.fixedDeltaTime);
 
-            if(system.isStopped)
-            {
-                system.Play();
-            }
+            //if(system.isStopped)
+            //{
+            //    system.Play();
+            //}
         }
-        else if(system.isPlaying)
-        {
-            system.Stop();
-        }
+    //    else if(system.isPlaying)
+    //    {
+    //        system.Stop();
+    //    }
     }
 }

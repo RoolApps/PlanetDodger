@@ -89,6 +89,7 @@ public class GameSession {
     {
         SetScore(0);
         SetGravity(GameDifficulty.Settings.Gravity);
+        Effects.Current.Forget();
     }
 
     public class ScoreEventArgs : System.EventArgs

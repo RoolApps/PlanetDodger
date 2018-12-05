@@ -56,10 +56,7 @@ public class Gravity : MonoBehaviour
                 {
                     shipParticleSystem.Play();
                 }
-
-                float AngleRad = Mathf.Atan2(direction.y, direction.x);
-                float AngleDeg = 180 / Mathf.PI * AngleRad;
-                shipParticleSystem.transform.rotation = Quaternion.Euler(180 - AngleDeg, 90, -90);
+                shipParticleSystem.transform.right = direction;
 
                 var main = shipParticleSystem.main;
                 main.startSpeedMultiplier = Mathf.Sqrt(direction.magnitude);
@@ -67,7 +64,8 @@ public class Gravity : MonoBehaviour
                 float distance = direction.sqrMagnitude * DistanceMultiplier + 1;
 
                 var gravitationalPull = planet.Radius * planet.Radius * PullMultiplier * GravityMultiplier;
-                PlayerRigidbody.AddForce(direction.normalized * (gravitationalPull / distance) * PlayerRigidbody.mass * Time.fixedDeltaTime);
+                
+                PlayerRigidbody.AddForce(direction.normalized * (gravitationalPull / distance) * PlayerRigidbody.mass * Time.deltaTime);
             }
         }
     }

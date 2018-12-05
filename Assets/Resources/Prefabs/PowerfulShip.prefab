@@ -107,6 +107,7 @@ GameObject:
   - component: {fileID: 114575078792512416}
   - component: {fileID: 114799694384660764}
   - component: {fileID: 114242856076497828}
+  - component: {fileID: 114157308934441808}
   m_Layer: 0
   m_Name: PowerfulShip
   m_TagString: Untagged
@@ -410,6 +411,19 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
+--- !u!114 &114157308934441808
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1482069672051472}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e4d9743dcabde1d489e66fba06b3816a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Interval: 10
+  Radius: 15
 --- !u!114 &114242856076497828
 MonoBehaviour:
   m_ObjectHideFlags: 1
