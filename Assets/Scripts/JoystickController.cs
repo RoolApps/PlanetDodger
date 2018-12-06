@@ -67,8 +67,18 @@ public class JoystickController : MonoBehaviour {
             force.x = Mathf.Clamp(force.x, -maxSpeed - Mathf.Clamp(speed.x, -maxSpeed, 0), maxSpeed - Mathf.Clamp(speed.x, 0, maxSpeed));
             force.y = Mathf.Clamp(force.y, -maxSpeed - Mathf.Clamp(speed.y, -maxSpeed, 0), maxSpeed - Mathf.Clamp(speed.y, 0, maxSpeed));
             playerRigidbody.AddForce(force);
+
+            var speedMagnitude = speed.magnitude;
+            var difference = speedMagnitude / maxSpeed;
+            var color = 1f - difference;
+            var xSize = 3f + difference;
+            var ySize = 2f + difference;
             foreach (var system in systems)
             {
+                var main = system.main;
+                main.startColor = new ParticleSystem.MinMaxGradient(new Color(1, color, color));
+                main.startSizeX = xSize;
+                main.startSizeY = ySize;
                 if (system.isStopped)
                 {
                     system.Play();
