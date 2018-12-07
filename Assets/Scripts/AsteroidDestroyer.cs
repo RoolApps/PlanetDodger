@@ -9,7 +9,12 @@ public class AsteroidDestroyer : MonoBehaviour
         if(collision.name == "Player")
         {
             Effects.Current.ShakeCamera();
-            Destroy(gameObject.transform.parent.gameObject, 1);
+            Destroy(gameObject.transform.parent.gameObject, 0.1f);
         }
+    }
+
+    private void OnDestroy()
+    {
+        Effects.Current.Explode(transform.position);
     }
 }

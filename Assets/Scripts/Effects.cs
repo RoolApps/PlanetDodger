@@ -6,6 +6,7 @@ public class Effects
 {
     private static Effects current;
     EZCameraShake.CameraShaker shaker;
+    Object explosionPrefab = Resources.Load("Prefabs/Explosion", typeof(GameObject));
 
     private Effects()
     {
@@ -29,5 +30,11 @@ public class Effects
 	public void ShakeCamera()
     {
         shaker.ShakeOnce(20, 1, 0, 2);
+    }
+
+    public void Explode(Vector3 position)
+    {
+        GameObject clone = Object.Instantiate(explosionPrefab, position, Quaternion.identity) as GameObject;
+        Object.Destroy(clone, 2);
     }
 }
